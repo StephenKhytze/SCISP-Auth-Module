@@ -89,11 +89,11 @@ The React Router is pre-configured. Any code written in your assigned file will 
 To maintain code stability and prevent conflicts, all teams must adhere to the following Git workflow.
 
 ### 1. Create a Feature Branch
-Never commit directly to the `master` branch. When starting work, always create a new branch:
+Never commit directly to the `master` branch. When starting work, always create a new branch named after yourself or the specific feature you are building:
 ```bash
 git checkout master
 git pull origin master
-git checkout -b group-2-library
+git checkout -b yourname-library-ui
 ```
 
 ### 2. Commit Your Changes
@@ -106,7 +106,7 @@ git commit -m "Add book checkout interface to library portal"
 ### 3. Push to GitHub
 Push your local branch to the remote GitHub repository:
 ```bash
-git push -u origin group-2-library
+git push -u origin yourname-library-ui
 ```
 
 ### 4. Create a Pull Request (PR)
