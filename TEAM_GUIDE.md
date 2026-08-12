@@ -81,3 +81,44 @@ The React Router is pre-configured. Any code written in your assigned file will 
 1. **Hot Reloading:** The frontend server supports hot module replacement (HMR). You do not need to restart Docker when saving a file; the browser will update automatically.
 2. **File Structure:** You may create additional folders and files (e.g., components) strictly inside your assigned module directory. Import these new files into your main module file.
 3. **Styling:** The project uses Tailwind CSS. Apply Tailwind utility classes directly within your JSX.
+
+---
+
+## Step 4: Version Control Workflow (Git & GitHub)
+
+To maintain code stability and prevent conflicts, all teams must adhere to the following Git workflow.
+
+### 1. Create a Feature Branch
+Never commit directly to the `master` branch. When starting work, always create a new branch:
+```bash
+git checkout master
+git pull origin master
+git checkout -b group-2-library
+```
+
+### 2. Commit Your Changes
+As you make progress, commit your changes locally with clear messages:
+```bash
+git add .
+git commit -m "Add book checkout interface to library portal"
+```
+
+### 3. Push to GitHub
+Push your local branch to the remote GitHub repository:
+```bash
+git push -u origin group-2-library
+```
+
+### 4. Create a Pull Request (PR)
+1. Navigate to the project repository on GitHub.
+2. Click "Compare & pull request" next to your recently pushed branch.
+3. Review the file changes to ensure you only modified your group's assigned files.
+4. Submit the Pull Request for review.
+5. Once approved by a reviewer, the branch will be merged into the `master` branch.
+
+### 5. Keep Your Environment Updated
+Regularly pull the latest changes from the remote repository to ensure your local environment is up to date with the rest of the teams:
+```bash
+git checkout master
+git pull origin master
+```
