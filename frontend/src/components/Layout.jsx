@@ -4,11 +4,14 @@ import Topbar from './Topbar';
 
 export default function Layout() {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', margin: 0, padding: 0 }}>
-      <Sidebar />
-      <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-        <Topbar />
-        <main style={{ padding: '2rem', backgroundColor: '#f5f5f5', flexGrow: 1 }}>
+    <div className="flex flex-col min-h-screen m-0 p-0 overflow-hidden bg-gray-100">
+      {/* Topbar spans the full width at the top */}
+      <Topbar />
+      
+      {/* Container for Sidebar and Main Content */}
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
+        <main className="flex-1 overflow-y-auto p-8 bg-[#f8f9fa]">
           <Outlet />
         </main>
       </div>
