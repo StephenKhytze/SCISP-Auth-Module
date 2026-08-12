@@ -93,7 +93,7 @@ Never commit directly to the `master` branch. When starting work, always create 
 ```bash
 git checkout master
 git pull origin master
-git checkout -b yourname-library-ui
+git checkout -b yourname
 ```
 
 ### 2. Commit Your Changes
@@ -106,7 +106,7 @@ git commit -m "Add book checkout interface to library portal"
 ### 3. Push to GitHub
 Push your local branch to the remote GitHub repository:
 ```bash
-git push -u origin yourname-library-ui
+git push -u origin yourname
 ```
 
 ### 4. Create a Pull Request (PR)
