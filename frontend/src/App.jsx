@@ -1,39 +1,32 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import Dashboard from './modules/home/Dashboard';
+import ScheduleView from './modules/schedule/ScheduleView';
+import AnnouncementList from './modules/announcements/AnnouncementList';
+import LibraryPortal from './modules/library/LibraryPortal';
+import StudentProfile from './modules/student_info/StudentProfile';
+import FacultyList from './modules/faculty/FacultyList';
+import Login from './modules/auth/Login';
 
 function App() {
-  const [message, setMessage] = useState('Loading...')
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    // Calling the Laravel Backend API test route
-    axios.get('http://localhost:8000/api/test')
-      .then(response => {
-        setMessage(response.data.message)
-      })
-      .catch(err => {
-        console.error(err)
-        setError('Failed to connect to the backend API. Make sure it is running.')
-      })
-  }, [])
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>React + Laravel API Setup</h1>
+    <BrowserRouter>
+      <Routes>
+        {/* Auth Route without Layout */}
+        <Route path="/auth" element={<Login />} />
         
-        {error ? (
-          <p style={{ color: 'red' }}>{error}</p>
-        ) : (
-          <div style={{ padding: '20px', border: '1px solid #646cff', borderRadius: '8px', marginTop: '20px' }}>
-            <h3>Message from Backend:</h3>
-            <p>{message}</p>
-          </div>
-        )}
-      </header>
-    </div>
-  )
+        {/* Main Routes wrapped in the template Layout */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="schedule" element={<ScheduleView />} />
+          <Route path="announcements" element={<AnnouncementList />} />
+          <Route path="library" element={<LibraryPortal />} />
+          <Route path="student-info" element={<StudentProfile />} />
+          <Route path="faculty" element={<FacultyList />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
