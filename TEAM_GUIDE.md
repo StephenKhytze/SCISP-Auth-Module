@@ -63,23 +63,20 @@ Find your group below and open your specific file:
 *   **Auth / Login Page:** `frontend/src/modules/auth/Login.jsx`
 *   **Dashboard (Home):** `frontend/src/modules/home/Dashboard.jsx`
 
-### Group 2: Schedule Module
-*   **Main File:** `frontend/src/modules/schedule/ScheduleView.jsx`
-*   *(This appears when clicking the "Schedule" tab)*
-
-### Group 3: Announcements Module
-*   **Main File:** `frontend/src/modules/announcements/AnnouncementList.jsx`
-*   *(This appears when clicking the "Announcements" tab)*
-
-### Group 4: Library Module
+### Group 2: Library Module
 *   **Main File:** `frontend/src/modules/library/LibraryPortal.jsx`
 *   *(This appears when clicking the "Library" tab)*
 
-### Group 5: Faculty Module
-*   **Main File:** `frontend/src/modules/faculty/FacultyList.jsx`
-*   *(This appears when clicking the "Faculty Directory" tab)*
+### Group 3: Class Schedule & Faculty Directory
+*   **Schedule File:** `frontend/src/modules/schedule/ScheduleView.jsx`
+*   **Faculty File:** `frontend/src/modules/faculty/FacultyList.jsx`
+*   *(These appear when clicking the "Schedule" and "Faculty Directory" tabs)*
 
-### Group 6: Student Information Module
+### Group 4: Announcements Module
+*   **Main File:** `frontend/src/modules/announcements/AnnouncementList.jsx`
+*   *(This appears when clicking the "Announcements" tab)*
+
+### Group 5: Student Information Module
 *   **Main File:** `frontend/src/modules/student_info/StudentProfile.jsx`
 *   *(This appears when clicking the "Student Information" tab)*
 
