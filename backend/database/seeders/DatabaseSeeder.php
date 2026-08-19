@@ -15,11 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory()->create([
+            'username' => 'DelaCruz_Juan_C1234',
+            'password' => \Illuminate\Support\Facades\Hash::make('secretpassword123'),
+            'role' => 'student',
+            'status' => 'active',
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'username' => 'Admin_User_00001',
+            'password' => \Illuminate\Support\Facades\Hash::make('secretpassword123'),
+            'role' => 'administrator',
+            'status' => 'active',
         ]);
     }
 }

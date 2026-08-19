@@ -1,14 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../services/api';
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simulate login and go to dashboard
-    navigate('/');
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await api.post('/auth/login', {
+        username,
+        password,
+      });
+
+      localStorage.setItem('access_token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+
+      if (onLogin) {
+        onLogin(response.data.user);
+      }
+
+      navigate('/');
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+        'Unable to connect to the server.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,12 +70,20 @@ export default function Login() {
             <p className="text-gray-600 font-medium">Sign in to your ABC School account</p>
           </div>
 
-          <form onSubmit={handleLogin} className="flex flex-col space-y-4">
+          {error && (
+            <div className="p-4 mb-4 text-sm text-red-800 rounded-2xl bg-red-50 border border-red-200" role="alert">
+              <span className="font-bold">Error:</span> {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="flex flex-col space-y-4" autoComplete="off">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Username"
-                defaultValue="DelaCruz_Juan_C1234"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="off"
                 className="w-full px-5 py-4 bg-white border border-gray-300 rounded-2xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#182848] focus:border-transparent font-medium"
                 required
               />
@@ -57,7 +93,9 @@ export default function Login() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
-                defaultValue="secretpassword123"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
                 className="w-full px-5 py-4 bg-white border border-gray-300 rounded-2xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#182848] focus:border-transparent font-medium pr-16"
                 required
               />
@@ -102,9 +140,10 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full py-4 bg-[#182848] hover:bg-[#111d35] text-white rounded-[1.5rem] font-bold text-[17px] shadow-md transition-all hover:shadow-lg"
+              disabled={loading}
+              className="w-full py-4 bg-[#182848] hover:bg-[#111d35] text-white rounded-[1.5rem] font-bold text-[17px] shadow-md transition-all hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Sign In
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
             
             <div className="text-center pt-4">

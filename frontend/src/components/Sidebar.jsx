@@ -62,6 +62,10 @@ export default function Sidebar() {
       <div className="mt-auto border-t border-[#651020] pt-4 pb-6">
         <Link
           to="/auth"
+          onClick={() => {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
+          }}
           className={`flex items-center py-4 text-white/80 hover:bg-white/10 hover:text-white rounded-r-2xl w-full transition-all duration-300 ${
             isCollapsed ? 'justify-center pr-0' : 'space-x-4 pr-4'
           }`}
