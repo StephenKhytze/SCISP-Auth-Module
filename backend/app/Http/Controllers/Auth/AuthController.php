@@ -62,8 +62,21 @@ class AuthController extends Controller
             $idNumber = (string)(10000 + $user->user_id);
         }
 
+        try {
+            $jwt = \App\Services\JwtService::generateToken($user, [
+                'name' => $name,
+                'role' => $role,
+                'department' => $department,
+                'idNumber' => $idNumber,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to generate authentication token: ' . $e->getMessage()
+            ], 500);
+        }
+
         return response()->json([
-            'access_token' => bin2hex(random_bytes(32)),
+            'access_token' => $jwt,
             'user' => [
                 'name' => $name,
                 'username' => $user->username,

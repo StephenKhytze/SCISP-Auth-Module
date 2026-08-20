@@ -612,78 +612,51 @@ Do not commit the resulting `.env`.
 
 # 12. Initialize JWT Authentication
 
-The Login Module uses JWT authentication.
+The Login Module uses JWT (JSON Web Token) authentication using the RS256 asymmetric cryptographic algorithm. This implementation is native to the application (defined in `App\Services\JwtService`) and does not rely on third-party PHP packages or external configuration files.
 
-First, make sure the dependencies have been installed:
-
-```powershell
-composer install
-```
-
-The JWT package should be installed automatically if it is listed in `composer.json`.
+To support token signing and verification, you must generate a private/public RSA key pair in the `backend/storage/` directory.
 
 ---
 
-## Step 1 — Check JWT configuration
+## Step 1 — Verify key directory
 
-Check whether the project already contains its JWT configuration, such as:
+From the `backend` directory, make sure the `storage` directory exists. If it does not exist, run:
 
-```text
-backend/config/jwt.php
+```powershell
+mkdir storage
 ```
-
-If it is already present in the repository, do not unnecessarily regenerate or replace it.
 
 ---
 
 ## Step 2 — Generate the JWT RSA keys
 
-The Login Module uses RSA keys for JWT authentication. These keys are required for the backend to create and validate authentication tokens.
+Run the following commands in your terminal (using Git Bash, WSL, or any environment with `openssl` installed) to generate the key pair:
 
-From the `backend` directory, make sure the JWT key directory exists:
+1. **Generate the private key:**
+   ```bash
+   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out storage/jwt-private.pem
+   ```
 
-```powershell
-mkdir storage
-````
+2. **Generate the public key from the private key:**
+   ```bash
+   openssl pkey -in storage/jwt-private.pem -pubout -out storage/jwt-public.pem
+   ```
 
-Generate the private key using Git Bash:
+After running these commands, verify that the key files are present:
 
-```
-openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out storage/jwt-private.pem
-```
-
-Generate the public key from the private key:
-
-```
-openssl pkey -in storage/jwt-private.pem -pubout -out storage/jwt-public.pem
-```
-
-If the keys cannot be generated due to this error:
-```
-genpkey: Can't open "storage/jwt-private.pem" for writing, No such file or directory
-Error writing to outfile: 'storage/jwt-private.pem'. Error: No such file or directory
-```
-
-Then run:
-
-```
-mkdir storage
-```
-
-After running these commands, verify that the following files exist:
-
-```
+```text
 backend/
 └── storage/
     ├── jwt-private.pem
     └── jwt-public.pem
 ```
 
-### Important
+---
 
-The private key must never be committed to GitHub or shared publicly.
+## Step 3 — Secure your keys
 
-If these files are listed in `.gitignore`, this is intentional. Each developer should generate their own local keys when setting up the project.
+* **Important:** The private key (`jwt-private.pem`) must **never** be committed to GitHub or shared publicly. It is automatically ignored in the project's `.gitignore` file.
+* Each developer must generate their own local key pair during local environment setup. Do not share or reuse keys between different environments.
 
 Do not copy another developer's private key into your local environment unless the project specifically requires a shared development key.
 
