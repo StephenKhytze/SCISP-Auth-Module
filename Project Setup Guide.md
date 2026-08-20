@@ -1460,6 +1460,79 @@ npm run dev
 
 ---
 
+## Problem: Incompatible PHP version during `composer install`
+
+If you run `composer install` and get an error stating that your PHP version is incompatible with the project's requirements.
+
+### Solution
+
+You need to download and install a newer version of PHP that meets the requirements specified in `composer.json`.
+1. Download a newer PHP thread-safe version from the official [PHP for Windows download page](https://windows.php.net/download/).
+2. Update your system's Environment Variables (`PATH`) to point to the new PHP directory.
+3. Restart your PowerShell terminal and run `php -v` to verify the update.
+
+---
+
+## Problem: Docker and XAMPP port conflict (same port used)
+
+When starting Docker containers, you get an error that a port (like `3306` for MySQL) is already in use by another application (e.g., XAMPP).
+
+### Solution
+
+1. **Option A (Recommended):** Stop the conflicting service in XAMPP. For example, open the XAMPP Control Panel and stop **MySQL** before running `docker compose up -d`.
+2. **Option B:** If you want to connect your local environment to your XAMPP MySQL database instead of Docker's database, add or modify the following line in your `backend/.env`:
+   ```env
+   DB_HOST=host.docker.internal
+   ```
+3. **Option C:** If you want to run Docker's MySQL on a different host port (e.g., `3307`), you can update the host port in `docker-compose.yml` under the `db` service ports from `"3306:3306"` to `"3307:3306"`, and then add/update the database port in your `backend/.env`:
+   ```env
+   DB_PORT=3307
+   ```
+
+---
+
+## Problem: Apache fails to start or errors in XAMPP after updating PHP
+
+### Solution
+
+This is a common initialization quirk with XAMPP's Apache service after updating your PHP files or paths. Try the following:
+1. Toggle the **Apache** service **Start** and **Stop** buttons in the XAMPP Control Panel a few times (around 3 times).
+2. If it still fails, close XAMPP completely, right-click the XAMPP Control Panel icon, select **Run as administrator**, and try toggling Apache again.
+3. Check the Apache Error Log in XAMPP to ensure there are no syntax errors in the updated PHP configurations.
+
+---
+
+## Problem: WSL installation is stuck or frozen
+
+When installing WSL, the process remains stuck indefinitely on the message `Installing: Windows Subsystem for Linux...`.
+
+### Solution
+
+1. Restart your computer.
+2. Open PowerShell as an Administrator.
+3. Run the installation command again:
+   ```powershell
+   wsl --install
+   ```
+4. If it gets stuck again, make sure that **Virtualization** is enabled in your system's BIOS settings and that the **Virtual Machine Platform** Windows feature is enabled.
+
+---
+
+## Problem: Vite options/shortcuts appear in the terminal, or terminal is blocked
+
+This happens when you run `docker compose up` without the `-d` (detached) flag, causing all container output and Vite's interactive menu to run in the foreground.
+
+### Solution
+
+1. Press `Ctrl + C` in the terminal to stop the foreground processes.
+2. Start the containers in the background (detached mode) by running:
+   ```powershell
+   docker compose up -d
+   ```
+3. Once running in detached mode, you can safely close the terminal tab or window.
+
+---
+
 # 25. Complete Setup Checklist
 
 Use this checklist when setting up the project on a new computer.
