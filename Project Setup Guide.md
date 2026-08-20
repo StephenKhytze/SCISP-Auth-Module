@@ -6,6 +6,8 @@ This guide explains how to set up the project on a **new computer** by downloadi
 
 This guide is written so that a developer who has **little experience with Laravel, React, Git, or command-line tools** can follow it step by step.
 
+For a better reading experience, press Ctrl+Shift+V
+
 ---
 
 # Table of Contents
@@ -549,7 +551,7 @@ It should look similar to:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=<module name>_db
+DB_DATABASE=<module name>_db // If using Docker Desktop, leave the DB_DATABASE as "laravel"
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -792,6 +794,8 @@ The backend is now running at:
 http://127.0.0.1:8000
 ```
 
+Press Ctrl+C to stop the server as it is already being run in Docker Desktop.
+
 ---
 
 # 16. Set Up the React Frontend
@@ -899,13 +903,15 @@ Vite should display a local address similar to:
 Local: http://localhost:5173/
 ```
 
+Run Ctrl+C to stop npm run dev if running Docker Desktop.
+
 Open the address in your browser.
 
 You should see the application's login page.
 
 ---
 
-# NOTE: THE NEXT SECTION IS NOT NEEDED WHEN USING DOCKER DESKTOP, ONLY RUN THESE COMMANDS WHEN DOCKER DESKTOP IS NOT RUNNING. OTHERWISE IGNORE THESE.
+# NOTE: THE NEXT SECTION IS NOT NEEDED WHEN USING DOCKER DESKTOP, ONLY RUN THESE COMMANDS WHEN DOCKER DESKTOP IS NOT RUNNING. OTHERWISE IGNORE THESE. PROCEED IF YOU EXPERIENCE ANY TECHNICAL ISSUES.
 
 # 20. Test the Login Module
 
