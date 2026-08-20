@@ -16,7 +16,17 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('username', $credentials['username'])->first();
+        try {
+            $user = User::where('username', $credentials['username'])->first();
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json([
+                'message' => 'Database connection error. Please try again later.'
+            ], 500);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'An error occurred during authentication.'
+            ], 500);
+        }
 
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json([
