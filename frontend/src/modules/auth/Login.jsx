@@ -54,7 +54,7 @@ export default function Login({ onLogin }) {
         <div className="w-full md:w-[55%] p-8 sm:p-12 lg:p-16 flex flex-col relative md:flex-[1]">
           
           {/* Logo */}
-          <div className="flex items-center justify-center mb-8 absolute bottom-[86%] lg:bottom-[85%] left-[50%] translate-x-[-50%] md:w-[40%]">
+          <div className="flex items-center justify-center mb-8 absolute bottom-[86%] lg:bottom-[84%] left-[50%] translate-x-[-50%] md:w-[40%]">
             <img src='/main_logo.png' alt='ABC School Logo' className='max-w-[70%]'/>
           </div>
 
@@ -156,7 +156,7 @@ export default function Login({ onLogin }) {
 
         {/* Right Side: Graphic Poster */}
         <div className="hidden lg:block w-[45%] relative md:flex-[1.2]">
-          <div className=" rounded-[2rem] overflow-hidden shadow-2xl absolute bottom-10 mr-5">
+          <div className=" rounded-[2rem] overflow-hidden shadow-[10px_10px_10px_0px_rgba(0,0,0,0.25)] absolute bottom-10 mr-5">
             <img 
               src="/auth-graphic.png" 
               alt="Truth and Wisdom" 
