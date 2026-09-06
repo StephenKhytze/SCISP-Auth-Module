@@ -31,7 +31,7 @@ export default function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
         className={`
           bg-[#80172B] text-white flex flex-col transition-all duration-300 ease-in-out
           fixed top-16 bottom-0 left-0 z-40 md:static md:top-auto md:bottom-auto
-          ${isMobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full md:translate-x-0'}
+          ${isMobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-[calc(100%+40px)] md:translate-x-0'}
           ${isCollapsed ? 'md:w-[100px]' : 'md:w-[280px]'}
           w-[270px] sm:w-[280px] min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-86px)] shrink-0
         `}
