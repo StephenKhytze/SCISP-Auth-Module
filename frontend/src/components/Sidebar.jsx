@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Calendar, Monitor, BookOpen, GraduationCap, Users, LogOut, ArrowLeft, ArrowRight } from 'lucide-react';
 
-export default function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
+export default function Sidebar({ isMobileOpen = false, onClose = () => {}, onLogout = () => {} }) {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -78,12 +78,11 @@ export default function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
 
         {/* Sign Out Button at the bottom */}
         <div className="mt-auto border-t border-[#651020] pt-4 pb-6">
-          <Link
-            to="/auth"
+          <button
+            type="button"
             onClick={() => {
               onClose();
-              localStorage.removeItem('access_token');
-              localStorage.removeItem('user');
+              onLogout();
             }}
             className={`flex items-center py-4 text-white/80 hover:bg-white/10 hover:text-white rounded-r-2xl w-full transition-all duration-300 ${
               isCollapsed ? 'md:justify-center md:pr-0' : 'space-x-4 pr-4'
@@ -97,7 +96,7 @@ export default function Sidebar({ isMobileOpen = false, onClose = () => {} }) {
                 Sign Out
               </span>
             )}
-          </Link>
+          </button>
         </div>
       </aside>
     </>

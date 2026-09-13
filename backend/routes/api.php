@@ -25,6 +25,7 @@ Route::get('/test', function () {
 */
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
     // Group 1: Add more auth routes here
 });
 

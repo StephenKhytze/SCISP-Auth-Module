@@ -2,6 +2,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import api from '../services/api';
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -15,10 +16,16 @@ export default function Layout() {
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
-    navigate('/auth');
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch {
+      // Proceed with local logout even if server fails
+    } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
+      navigate('/auth');
+    }
   };
 
   return (
@@ -37,6 +44,7 @@ export default function Layout() {
         <Sidebar 
           isMobileOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
+          onLogout={handleLogout}
         />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-[#f8f9fa]">
           <Outlet />
