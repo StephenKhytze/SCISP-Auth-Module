@@ -7,6 +7,7 @@ import LibraryPortal from './modules/library/LibraryPortal';
 import StudentProfile from './modules/student_info/StudentProfile';
 import FacultyList from './modules/faculty/FacultyList';
 import Login from './modules/auth/Login';
+import RegistrationConfirmation from './modules/admin/RegistrationConfirmation';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('access_token');
@@ -22,12 +23,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Auth Route without Layout */}
+        {/* Auth Routes without Layout */}
         <Route path="/auth" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><Login /></PublicRoute>} />
         
         {/* Main Routes wrapped in the template Layout */}
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
+          <Route path="admin/registrations" element={<RegistrationConfirmation />} />
           <Route path="schedule" element={<ScheduleView />} />
           <Route path="announcements" element={<AnnouncementList />} />
           <Route path="library" element={<LibraryPortal />} />

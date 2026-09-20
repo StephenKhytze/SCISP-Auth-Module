@@ -27,7 +27,20 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['username', 'password', 'role', 'status'])]
+#[Fillable([
+    'username',
+    'first_name',
+    'last_name',
+    'email',
+    'google_id',
+    'avatar',
+    'password',
+    'role',
+    'department',
+    'id_number',
+    'status',
+    'must_change_password'
+])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -47,6 +60,15 @@ class User extends Authenticatable implements PasskeyUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'must_change_password' => 'boolean',
         ];
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        if ($this->first_name || $this->last_name) {
+            return trim("{$this->first_name} {$this->last_name}");
+        }
+        return str_replace('_', ' ', $this->username);
     }
 }

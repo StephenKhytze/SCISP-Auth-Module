@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\StudentRegistrationController;
 use App\Http\Controllers\Home\DashboardController;
 use App\Http\Controllers\Schedule\ScheduleController;
 use App\Http\Controllers\Announcements\AnnouncementController;
@@ -26,10 +28,24 @@ Route::get('/test', function () {
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    // Group 1: Add more auth routes here
+    Route::post('/register', [StudentRegistrationController::class, 'register']);
+    Route::get('/registration-status', [StudentRegistrationController::class, 'status']);
+    Route::post('/google', [GoogleAuthController::class, 'handleGoogleAuth']);
 });
 
 Route::middleware('auth.jwt')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('/change-password', [AuthController::class, 'changePassword']);
+    });
+
+    Route::prefix('admin/registrations')->group(function () {
+        Route::get('/', [StudentRegistrationController::class, 'index']);
+        Route::get('/stats', [StudentRegistrationController::class, 'stats']);
+        Route::get('/outbox', [StudentRegistrationController::class, 'outbox']);
+        Route::post('/{id}/approve', [StudentRegistrationController::class, 'approve']);
+        Route::post('/{id}/reject', [StudentRegistrationController::class, 'reject']);
+    });
+
     Route::prefix('home')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
         // Group 1: Add more home routes here

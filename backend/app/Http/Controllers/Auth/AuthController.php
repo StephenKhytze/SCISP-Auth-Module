@@ -45,7 +45,12 @@ class AuthController extends Controller
         $department = 'IT';
         $idNumber = '99999';
 
-        if ($user->username === 'DelaCruz_Juan_C1234') {
+        if ($user->first_name || $user->last_name) {
+            $name = $user->full_name;
+            $role = ucfirst($user->role);
+            $department = $user->department ?: 'College of Computer Studies';
+            $idNumber = $user->id_number ?: (string)(10000 + $user->user_id);
+        } elseif ($user->username === 'DelaCruz_Juan_C1234') {
             $name = 'Juan Dela Cruz';
             $role = 'Student';
             $department = 'College of Computer Studies';
@@ -68,8 +73,8 @@ class AuthController extends Controller
         } else {
             $name = str_replace('_', ' ', $user->username);
             $role = ucfirst($user->role);
-            $department = 'Academic';
-            $idNumber = (string)(10000 + $user->user_id);
+            $department = $user->department ?: 'Academic';
+            $idNumber = $user->id_number ?: (string)(10000 + $user->user_id);
         }
 
         try {
@@ -78,6 +83,7 @@ class AuthController extends Controller
                 'role' => $role,
                 'department' => $department,
                 'idNumber' => $idNumber,
+                'must_change_password' => (bool)$user->must_change_password,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -93,6 +99,52 @@ class AuthController extends Controller
                 'role' => $role,
                 'department' => $department,
                 'idNumber' => $idNumber,
+                'must_change_password' => (bool)$user->must_change_password,
+            ]
+        ]);
+    }
+
+    public function changePassword(Request $request) {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Unauthenticated.'
+            ], 401);
+        }
+
+        $request->validate([
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user->password = Hash::make($request->new_password);
+        $user->must_change_password = false;
+        $user->save();
+
+        $name = $user->full_name ?: str_replace('_', ' ', $user->username);
+        $role = ucfirst($user->role);
+        $department = $user->department ?: 'College of Computer Studies';
+        $idNumber = $user->id_number ?: (string)(10000 + $user->user_id);
+
+        $freshToken = \App\Services\JwtService::generateToken($user, [
+            'name' => $name,
+            'role' => $role,
+            'department' => $department,
+            'idNumber' => $idNumber,
+            'must_change_password' => false,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Permanent password set successfully! Welcome to your student portal.',
+            'access_token' => $freshToken,
+            'user' => [
+                'name' => $name,
+                'username' => $user->username,
+                'role' => $role,
+                'department' => $department,
+                'idNumber' => $idNumber,
+                'must_change_password' => false,
             ]
         ]);
     }

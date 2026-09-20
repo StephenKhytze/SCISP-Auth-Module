@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import api from '../../services/api';
 import { 
   Calendar, 
   Megaphone, 
@@ -16,7 +17,8 @@ import {
   FileCheck, 
   Layers, 
   Activity,
-  AlertCircle
+  AlertCircle,
+  UserCheck
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -47,6 +49,20 @@ export default function Dashboard() {
   const isAdmin = roleRaw === 'admin' || roleRaw === 'administrator';
   const isSuperAdmin = roleRaw === 'superadmin' || roleRaw === 'super admin';
   const isStudent = !isTeacher && !isAdmin && !isSuperAdmin;
+
+  const [pendingRegistrations, setPendingRegistrations] = useState([]);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (isAdmin || isSuperAdmin) {
+      api.get('/admin/registrations?status=pending')
+        .then((res) => {
+          setPendingRegistrations(res.data.data || []);
+          setPendingCount(res.data.total || (res.data.data ? res.data.data.length : 0));
+        })
+        .catch(() => {});
+    }
+  }, [isAdmin, isSuperAdmin]);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
@@ -388,74 +404,61 @@ export default function Dashboard() {
                   Academic Administrative Approval Queue
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
-                  Prerequisite waivers, section expansions &amp; schedule revisions
+                  Student registrations, prerequisite waivers &amp; enrollment revisions
                 </p>
               </div>
-              <div className="self-start sm:self-center">
+              <div className="self-start sm:self-center flex items-center gap-2">
                 <span className="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold rounded-full">
-                  6 Action Items
+                  {pendingCount} Pending Student {pendingCount === 1 ? 'Request' : 'Requests'}
                 </span>
+                <button
+                  onClick={() => navigate('/admin/registrations')}
+                  className="px-3 py-1 bg-[#182848] text-white text-xs font-bold rounded-full hover:bg-[#111d35] transition-colors"
+                >
+                  Open Console
+                </button>
               </div>
             </div>
 
             <div className="space-y-4">
-              {/* Queue Item 1 */}
-              <div className="bg-amber-50/20 border border-amber-200/60 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <span className="inline-block px-2.5 py-0.5 bg-amber-100/90 text-amber-900 text-[10px] font-extrabold uppercase tracking-wider rounded-md">
-                    PREREQUISITE OVERRIDE
-                  </span>
-                  <h3 className="font-bold text-slate-900 text-sm sm:text-base">
-                    Maria Santos (2023-00912)
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                    Requesting waiver for IT 311 (Prereq: CS 101 passed)
-                  </p>
+              {pendingRegistrations.length === 0 ? (
+                <div className="text-center py-8 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
+                  <UserCheck className="w-8 h-8 text-emerald-600 mx-auto" />
+                  <p className="text-xs font-bold text-slate-700">No pending student registrations</p>
+                  <p className="text-[11px] text-slate-500">All student admission applications have been processed.</p>
                 </div>
-                <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
-                  <button 
-                    type="button" 
-                    className="px-4 py-1.5 bg-[#007A5A] text-white text-xs font-bold rounded-lg hover:bg-[#00664a] transition-colors cursor-default"
-                  >
-                    Approve
-                  </button>
-                  <button 
-                    type="button" 
-                    className="px-4 py-1.5 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors cursor-default"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
-
-              {/* Queue Item 2 */}
-              <div className="bg-amber-50/20 border border-amber-200/60 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <span className="inline-block px-2.5 py-0.5 bg-amber-100/90 text-amber-900 text-[10px] font-extrabold uppercase tracking-wider rounded-md">
-                    SECTION EXPANSION
-                  </span>
-                  <h3 className="font-bold text-slate-900 text-sm sm:text-base">
-                    BSIT 3-A Committee
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                    Expand section capacity from 40 to 45 seats for DB 301
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
-                  <button 
-                    type="button" 
-                    className="px-4 py-1.5 bg-[#007A5A] text-white text-xs font-bold rounded-lg hover:bg-[#00664a] transition-colors cursor-default"
-                  >
-                    Approve
-                  </button>
-                  <button 
-                    type="button" 
-                    className="px-4 py-1.5 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors cursor-default"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </div>
+              ) : (
+                pendingRegistrations.slice(0, 3).map((reg) => (
+                  <div key={reg.id} className="bg-amber-50/25 border border-amber-200/70 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block px-2.5 py-0.5 bg-amber-100/90 text-amber-900 text-[10px] font-extrabold uppercase tracking-wider rounded-md">
+                          STUDENT REGISTRATION
+                        </span>
+                        <span className="font-mono text-xs text-slate-500 font-bold">
+                          {reg.reference_no}
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+                        {reg.first_name} {reg.middle_name ? `${reg.middle_name} ` : ''}{reg.last_name}
+                      </h3>
+                      <p className="text-xs text-slate-600 font-medium">
+                        Applying for: <strong>{reg.program}</strong> ({reg.year_level}) • {reg.email}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
+                      <button 
+                        type="button" 
+                        onClick={() => navigate('/admin/registrations')}
+                        className="px-4 py-2 bg-[#80172B] text-white text-xs font-bold rounded-xl hover:bg-[#681323] transition-colors shadow-sm flex items-center space-x-1"
+                      >
+                        <UserCheck className="w-3.5 h-3.5" />
+                        <span>Review &amp; Accept</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </>

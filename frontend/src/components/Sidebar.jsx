@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, Monitor, BookOpen, GraduationCap, Users, LogOut, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Home, Calendar, Monitor, BookOpen, GraduationCap, Users, LogOut, ArrowLeft, ArrowRight, UserCheck } from 'lucide-react';
 
 export default function Sidebar({ isMobileOpen = false, onClose = () => {}, onLogout = () => {} }) {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const storedUser = (() => {
+    try {
+      const u = localStorage.getItem('user');
+      return u ? JSON.parse(u) : null;
+    } catch {
+      return null;
+    }
+  })();
+  const roleRaw = (storedUser?.role || '').toLowerCase();
+  const isAdmin = roleRaw === 'admin' || roleRaw === 'administrator' || roleRaw === 'superadmin' || roleRaw === 'super admin';
+
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
+    ...(isAdmin ? [{ path: '/admin/registrations', label: 'Registration Requests', icon: UserCheck }] : []),
     { path: '/schedule', label: 'Schedule', icon: Calendar },
     { path: '/announcements', label: 'Announcement', icon: Monitor },
     { path: '/library', label: 'Library', icon: BookOpen },
