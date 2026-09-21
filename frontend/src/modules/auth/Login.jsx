@@ -104,17 +104,17 @@ export default function Login({ onLogin }) {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center p-4 sm:p-8"
+      className="min-h-screen bg-cover bg-center flex flex-col justify-start lg:justify-center items-center p-4 sm:p-6 lg:p-8 overflow-y-auto"
       style={{ backgroundImage: `url('/bg-campus.jpeg')` }}
     >
       {/* Dark overlay for better contrast */}
       <div className="fixed inset-0 bg-gradient-to-b from-[#111111]/30 via-[#111111]/70 to-[#111111]/90 backdrop-blur-[2px]"></div>
 
       {/* Main Glass Container */}
-      <div className="relative w-full max-w-[1000px] md:w-[100%] md:max-w-[1200px] min-h-[660px] py-8 sm:py-10 bg-[#E8EEF2]/85 backdrop-blur-xl rounded-[2rem] shadow-2xl flex flex-col md:flex-row border border-white/40 mt-20 md:ml-12 md:mr-12">
+      <div className="relative w-full max-w-[1000px] lg:w-[100%] lg:max-w-[1200px] min-h-0 lg:min-h-[660px] py-6 sm:py-8 lg:py-10 bg-[#E8EEF2]/85 backdrop-blur-xl rounded-[2rem] shadow-2xl flex flex-col lg:flex-row border border-white/40 mt-16 sm:mt-20 my-6 lg:my-0 lg:ml-12 lg:mr-12">
 
         {/* MOBILE SEGMENTED TOGGLE (< lg screens) */}
-        <div className="lg:hidden px-6 pt-6 pb-2 z-20">
+        <div className="lg:hidden w-full px-4 sm:px-6 pt-2 pb-4 z-20">
           <div className="flex bg-slate-200/90 p-1.5 rounded-2xl max-w-sm mx-auto shadow-inner border border-white/60">
             <button
               type="button"
@@ -144,7 +144,7 @@ export default function Login({ onLogin }) {
         {/* ========================================================================= */}
         <div
           className={`
-            w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center overflow-visible
+            w-full lg:w-1/2 p-5 sm:p-8 lg:p-12 flex flex-col justify-start lg:justify-center overflow-visible
             lg:absolute lg:top-0 lg:left-0 lg:h-full lg:transition-all lg:duration-700 lg:ease-in-out
             ${isRegister
               ? 'hidden lg:flex lg:opacity-0 lg:pointer-events-none lg:z-10'
@@ -153,7 +153,7 @@ export default function Login({ onLogin }) {
           `}
         >
           {/* Floating Logo */}
-          <div className="flex items-center justify-center mb-8 absolute -top-20 sm:-top-[5.5rem] left-1/2 -translate-x-1/2 w-[40%] max-w-[180px] pointer-events-none">
+          <div className="flex items-center justify-center mb-6 lg:mb-8 absolute -top-16 sm:-top-20 lg:-top-[5.5rem] left-1/2 -translate-x-1/2 w-[35%] max-w-[140px] sm:max-w-[180px] pointer-events-none">
             <img src="/main_logo.png" alt="ABC School Logo" className="w-full object-contain" />
           </div>
 
@@ -243,8 +243,22 @@ export default function Login({ onLogin }) {
             </button>
           </form>
 
+            {/* Quick switch to register on mobile (< lg) */}
+            <div className="lg:hidden text-center pt-3 pb-1">
+              <p className="text-xs text-slate-600 font-medium">
+                Don't have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => toggleMode(true)}
+                  className="font-bold text-[#80172B] hover:underline cursor-pointer"
+                >
+                  Register as Student
+                </button>
+              </p>
+            </div>
+
           {/* Footer */}
-          <div className="pt-5 text-center mt-2">
+          <div className="pt-4 text-center mt-1">
             <p className="text-[11px] text-gray-500 font-medium">
               ABC School Student Portal v0.0.0 &copy; 2026
             </p>
@@ -256,7 +270,7 @@ export default function Login({ onLogin }) {
         {/* ========================================================================= */}
         <div
           className={`
-            w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center overflow-visible
+            w-full lg:w-1/2 p-5 sm:p-8 lg:p-12 flex flex-col justify-start lg:justify-center overflow-visible
             lg:absolute lg:top-0 lg:right-0 lg:h-full lg:transition-all lg:duration-700 lg:ease-in-out
             ${isRegister
               ? 'flex lg:opacity-100 lg:pointer-events-auto lg:z-20'
@@ -265,12 +279,12 @@ export default function Login({ onLogin }) {
           `}
         >
           {/* Floating Logo on Registration Form */}
-          <div className="flex items-center justify-center mb-8 absolute -top-20 sm:-top-[5.5rem] left-1/2 -translate-x-1/2 w-[40%] max-w-[180px] pointer-events-none">
+          <div className="flex items-center justify-center mb-6 lg:mb-8 absolute -top-16 sm:-top-20 lg:-top-[5.5rem] left-1/2 -translate-x-1/2 w-[35%] max-w-[140px] sm:max-w-[180px] pointer-events-none">
             <img src="/main_logo.png" alt="ABC School Logo" className="w-full object-contain" />
           </div>
 
           <div className="text-center mb-4">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1">
               Student Registration
             </h1>
             <p className="text-xs text-gray-600 font-medium">
@@ -328,6 +342,7 @@ export default function Login({ onLogin }) {
         isOpen={!!firstTimeUser}
         user={firstTimeUser}
         onPasswordSet={handlePasswordSet}
+        onClose={() => setFirstTimeUser(null)}
       />
 
       {/* Google OAuth & Account Selector Modal */}

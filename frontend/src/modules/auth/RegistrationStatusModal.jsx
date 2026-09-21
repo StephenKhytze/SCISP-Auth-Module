@@ -78,6 +78,20 @@ export default function RegistrationStatusModal({ isOpen, onClose, initialQuery 
           </button>
         </form>
 
+        {loading && (
+          <div className="mt-5 pt-4 border-t border-slate-100 space-y-3 animate-pulse">
+            <div className="flex items-center justify-between">
+              <div className="h-4 w-28 bg-slate-200 rounded-md"></div>
+              <div className="h-6 w-24 bg-slate-200 rounded-full"></div>
+            </div>
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2.5">
+              <div className="h-4 w-40 bg-slate-200 rounded-md"></div>
+              <div className="h-3 w-56 bg-slate-200 rounded-md"></div>
+              <div className="h-3 w-48 bg-slate-200 rounded-md"></div>
+            </div>
+          </div>
+        )}
+
         {error && (
           <div className="mt-4 p-3 text-xs text-rose-800 bg-rose-50 border border-rose-200 rounded-xl flex items-start space-x-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />

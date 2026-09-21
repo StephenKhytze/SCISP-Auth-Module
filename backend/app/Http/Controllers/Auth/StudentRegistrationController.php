@@ -202,9 +202,9 @@ class StudentRegistrationController extends Controller
             $counter++;
         }
 
-        // Generate temporary password
+        // Generate temporary password that strictly meets complexity rules
         $temporaryPassword = $request->input('custom_password') 
-            ?: 'Abc#' . Str::random(6);
+            ?: 'Abc#' . rand(100, 999) . strtolower(Str::random(3));
 
         $adminNotes = $request->input('admin_notes', 'Registration verified and approved by administration.');
 
