@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
 import StudentRegisterForm from './StudentRegisterForm';
@@ -12,6 +12,19 @@ export default function Login({ onLogin }) {
 
   // Mode: Sign In vs Student Registration
   const [isRegister, setIsRegister] = useState(location.pathname === '/register');
+
+  useEffect(() => {
+    setIsRegister(location.pathname === '/register');
+  }, [location.pathname]);
+
+  const toggleMode = (registerMode) => {
+    setIsRegister(registerMode);
+    if (registerMode) {
+      navigate('/register', { replace: true });
+    } else {
+      navigate('/auth', { replace: true });
+    }
+  };
 
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
@@ -90,40 +103,36 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div 
-      className="min-h-screen bg-cover bg-center flex items-center justify-center p-3 sm:p-6 lg:p-10 relative overflow-x-hidden"
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center p-4 sm:p-8"
       style={{ backgroundImage: `url('/bg-campus.jpeg')` }}
     >
-      {/* Dark gradient overlay for campus backdrop depth */}
+      {/* Dark overlay for better contrast */}
       <div className="fixed inset-0 bg-gradient-to-b from-[#111111]/30 via-[#111111]/70 to-[#111111]/90 backdrop-blur-[2px]"></div>
 
-      {/* ========================================================================= */}
-      {/* MAIN CONTAINER: Classic Double-Slider Card with ABC School Branding       */}
-      {/* ========================================================================= */}
-      <div className="relative w-full max-w-[1140px] min-h-[670px] bg-[#E8EEF2]/90 backdrop-blur-xl rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] border border-white/50 overflow-hidden z-10 my-4 flex flex-col justify-center">
-        
+      {/* Main Glass Container */}
+      <div className="relative w-full max-w-[1000px] md:w-[100%] md:max-w-[1200px] min-h-[660px] py-8 sm:py-10 bg-[#E8EEF2]/85 backdrop-blur-xl rounded-[2rem] shadow-2xl flex flex-col md:flex-row border border-white/40 mt-20 md:ml-12 md:mr-12">
+
         {/* MOBILE SEGMENTED TOGGLE (< lg screens) */}
         <div className="lg:hidden px-6 pt-6 pb-2 z-20">
           <div className="flex bg-slate-200/90 p-1.5 rounded-2xl max-w-sm mx-auto shadow-inner border border-white/60">
             <button
               type="button"
-              onClick={() => setIsRegister(false)}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                !isRegister 
-                  ? 'bg-[#182848] text-white shadow-md' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              onClick={() => toggleMode(false)}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${!isRegister
+                ? 'bg-[#182848] text-white shadow-md'
+                : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               Sign In
             </button>
             <button
               type="button"
-              onClick={() => setIsRegister(true)}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                isRegister 
-                  ? 'bg-[#80172B] text-white shadow-md' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              onClick={() => toggleMode(true)}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${isRegister
+                ? 'bg-[#80172B] text-white shadow-md'
+                : 'text-slate-600 hover:text-slate-900'
+                }`}
             >
               Register as Student
             </button>
@@ -131,21 +140,21 @@ export default function Login({ onLogin }) {
         </div>
 
         {/* ========================================================================= */}
-        {/* FORM 1: ORIGINAL SIGN IN (Left Half)                                      */}
+        {/* FORM 1: SIGN IN (Left Half)                                               */}
         {/* ========================================================================= */}
-        <div 
+        <div
           className={`
-            w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center overflow-y-auto
+            w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center overflow-visible
             lg:absolute lg:top-0 lg:left-0 lg:h-full lg:transition-all lg:duration-700 lg:ease-in-out
-            ${isRegister 
-              ? 'hidden lg:flex lg:opacity-0 lg:pointer-events-none lg:z-10' 
+            ${isRegister
+              ? 'hidden lg:flex lg:opacity-0 lg:pointer-events-none lg:z-10'
               : 'flex lg:opacity-100 lg:pointer-events-auto lg:z-20'
             }
           `}
         >
-          {/* School Centered Logo */}
-          <div className="flex items-center justify-center mb-3">
-            <img src="/main_logo.png" alt="ABC School Logo" className="h-14 md:h-16 max-w-[70%] object-contain" />
+          {/* Floating Logo */}
+          <div className="flex items-center justify-center mb-8 absolute -top-20 sm:-top-[5.5rem] left-1/2 -translate-x-1/2 w-[40%] max-w-[180px] pointer-events-none">
+            <img src="/main_logo.png" alt="ABC School Logo" className="w-full object-contain" />
           </div>
 
           <div className="text-center mb-5">
@@ -234,7 +243,7 @@ export default function Login({ onLogin }) {
             </button>
           </form>
 
-          {/* Original Footer */}
+          {/* Footer */}
           <div className="pt-5 text-center mt-2">
             <p className="text-[11px] text-gray-500 font-medium">
               ABC School Student Portal v0.0.0 &copy; 2026
@@ -243,24 +252,25 @@ export default function Login({ onLogin }) {
         </div>
 
         {/* ========================================================================= */}
-        {/* FORM 2: 3-SECTION STUDENT REGISTRATION (Right Half)                       */}
+        {/* FORM 2: STUDENT REGISTRATION (Right Half)                                 */}
         {/* ========================================================================= */}
-        <div 
+        <div
           className={`
-            w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center overflow-y-auto
+            w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center overflow-visible
             lg:absolute lg:top-0 lg:right-0 lg:h-full lg:transition-all lg:duration-700 lg:ease-in-out
-            ${isRegister 
-              ? 'flex lg:opacity-100 lg:pointer-events-auto lg:z-20' 
+            ${isRegister
+              ? 'flex lg:opacity-100 lg:pointer-events-auto lg:z-20'
               : 'hidden lg:flex lg:opacity-0 lg:pointer-events-none lg:z-10'
             }
           `}
         >
-          <div className="flex items-center justify-center mb-2">
-            <img src="/main_logo.png" alt="ABC School Logo" className="h-12 md:h-14 max-w-[60%] object-contain" />
+          {/* Floating Logo on Registration Form */}
+          <div className="flex items-center justify-center mb-8 absolute -top-20 sm:-top-[5.5rem] left-1/2 -translate-x-1/2 w-[40%] max-w-[180px] pointer-events-none">
+            <img src="/main_logo.png" alt="ABC School Logo" className="w-full object-contain" />
           </div>
 
-          <div className="text-center mb-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-0.5">
+          <div className="text-center mb-4">
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
               Student Registration
             </h1>
             <p className="text-xs text-gray-600 font-medium">
@@ -268,37 +278,34 @@ export default function Login({ onLogin }) {
             </p>
           </div>
 
-          <StudentRegisterForm 
-            onBackToLogin={() => setIsRegister(false)}
+          <StudentRegisterForm
+            onBackToLogin={() => toggleMode(false)}
             onOpenStatusCheck={openStatusCheck}
           />
         </div>
 
         {/* ========================================================================= */}
         {/* SLIDING GRAPHIC POSTER PANEL (Desktop >= lg)                              */}
-        {/* Slides from Right (translate-x-0) to Left (-translate-x-full)            */}
         {/* ========================================================================= */}
-        <div 
+        <div
           className={`
-            hidden lg:flex absolute top-0 left-1/2 w-1/2 h-full p-4 sm:p-5 lg:p-6 z-30
-            transition-transform duration-700 ease-in-out
-            ${isRegister ? '-translate-x-full' : 'translate-x-0'}
+            hidden lg:block absolute -top-16 bottom-4 w-[43%] z-30
+            transition-all duration-700 ease-in-out
+            ${isRegister ? 'left-5' : 'left-[53%] translate-x-2'}
           `}
         >
-          {/* Poster Frame: Matches original design (rounded-[2rem], shadow-2xl, border) */}
-          <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/80 bg-slate-900 flex flex-col justify-end items-center">
-            {/* Full Image Artwork */}
-            <img 
-              src="/auth-graphic.png" 
-              alt="ABC School - Truth and Wisdom" 
-              className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+          <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-[10px_10px_10px_0px_rgba(0,0,0,0.25)]">
+            <img
+              src="/auth-graphic.png"
+              alt="Truth and Wisdom"
+              className="w-full h-full object-cover select-none pointer-events-none"
             />
 
-            {/* Gradient Scrim & Single Action Button (No other text) */}
-            <div className="relative z-10 w-full pt-20 pb-8 px-6 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex justify-center">
+            {/* REGISTER AS STUDENT / SIGN IN Action Button */}
+            <div className="absolute bottom-6 inset-x-0 flex justify-center z-20 px-6">
               <button
                 type="button"
-                onClick={() => setIsRegister(!isRegister)}
+                onClick={() => toggleMode(!isRegister)}
                 className="w-auto min-w-[220px] px-8 py-3.5 border-2 border-white text-white bg-black/40 hover:bg-white hover:text-[#182848] rounded-full font-bold text-xs uppercase tracking-widest backdrop-blur-md transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.5)] active:scale-95 cursor-pointer text-center"
               >
                 {isRegister ? 'Sign In' : 'Register as Student'}
@@ -332,4 +339,3 @@ export default function Login({ onLogin }) {
     </div>
   );
 }
-

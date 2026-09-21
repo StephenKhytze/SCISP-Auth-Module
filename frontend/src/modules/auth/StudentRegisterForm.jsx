@@ -195,15 +195,15 @@ export default function StudentRegisterForm({ onBackToLogin, onOpenStatusCheck }
   return (
     <div className="space-y-6">
       {/* 3-Section Stepper Progress Header */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-bold">
-          <span className={step >= 1 ? 'text-[#182848]' : 'text-slate-400'}>
+      <div className="space-y-1.5">
+        <div className="grid grid-cols-3 gap-2 text-xs font-bold text-left">
+          <span className={`truncate ${step >= 1 ? 'text-[#182848]' : 'text-slate-400'}`}>
             1. Personal Details
           </span>
-          <span className={step >= 2 ? 'text-[#182848]' : 'text-slate-400'}>
+          <span className={`truncate ${step >= 2 ? 'text-[#182848]' : 'text-slate-400'}`}>
             2. Academic Info
           </span>
-          <span className={step >= 3 ? 'text-[#182848]' : 'text-slate-400'}>
+          <span className={`truncate ${step >= 3 ? 'text-[#182848]' : 'text-slate-400'}`}>
             3. Contact &amp; Delivery
           </span>
         </div>
