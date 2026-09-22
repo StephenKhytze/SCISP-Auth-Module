@@ -102,17 +102,17 @@ class GoogleAuthController extends Controller
                     $user = User::where('email', $email)->first();
                 } elseif ($existingReg->status === 'pending') {
                     return response()->json([
-                        'message' => "Your registration application ({$existingReg->reference_number}) is currently pending review by the Admissions Office. Once approved, you can sign in directly with Google.",
+                        'message' => "Your registration application ({$existingReg->reference_no}) is currently pending review by the Admissions Office. Once approved, you can sign in directly with Google.",
                         'error_code' => 'REGISTRATION_PENDING',
-                        'reference_number' => $existingReg->reference_number,
+                        'reference_number' => $existingReg->reference_no,
                         'email' => $email
                     ], 403);
                 } elseif ($existingReg->status === 'rejected') {
-                    $reason = $existingReg->rejection_reason ?: 'Incomplete scholastic prerequisites.';
+                    $reason = $existingReg->admin_notes ?: 'Incomplete scholastic prerequisites.';
                     return response()->json([
-                        'message' => "Your registration ({$existingReg->reference_number}) was not approved. Reason: {$reason}. Please contact the Registrar.",
+                        'message' => "Your registration ({$existingReg->reference_no}) was not approved. Reason: {$reason}. Please contact the Registrar.",
                         'error_code' => 'REGISTRATION_REJECTED',
-                        'reference_number' => $existingReg->reference_number,
+                        'reference_number' => $existingReg->reference_no,
                         'email' => $email
                     ], 403);
                 }
