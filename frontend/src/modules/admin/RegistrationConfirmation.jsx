@@ -45,6 +45,7 @@ export default function RegistrationConfirmation() {
 
   // Reject Form
   const [rejectionReason, setRejectionReason] = useState('Incomplete scholastic records or prerequisite requirements.');
+  const [customRejectionReason, setCustomRejectionReason] = useState('');
 
   // Notification Toast
   const [toast, setToast] = useState(null);
@@ -124,16 +125,26 @@ export default function RegistrationConfirmation() {
   const openRejectModal = (student) => {
     setRejectTarget(student);
     setRejectionReason('Incomplete scholastic records or prerequisite requirements.');
+    setCustomRejectionReason('');
   };
 
   const handleRejectSubmit = async (e) => {
     e.preventDefault();
     if (!rejectTarget) return;
 
+    const finalReason = rejectionReason === 'Other'
+      ? customRejectionReason.trim()
+      : rejectionReason;
+
+    if (!finalReason) {
+      showToast('Please provide a specific reason for denying the registration.', 'error');
+      return;
+    }
+
     setActionLoading(true);
     try {
       const res = await api.post(`/admin/registrations/${rejectTarget.id}/reject`, {
-        reason: rejectionReason,
+        reason: finalReason,
       });
 
       showToast(res.data.message || 'Registration rejected and student notified.');
@@ -800,7 +811,7 @@ export default function RegistrationConfirmation() {
                   <select
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900"
+                    className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500 font-medium cursor-pointer"
                   >
                     <option value="Incomplete scholastic records or prerequisite requirements.">
                       Incomplete scholastic records or prerequisite requirements
@@ -814,21 +825,29 @@ export default function RegistrationConfirmation() {
                     <option value="Transferee credentials need on-campus verification with Registrar.">
                       Transferee credentials need on-campus verification
                     </option>
+                    <option value="Other">
+                      Other (Specify custom reason...)
+                    </option>
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Custom Administrative Explanation
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900"
-                    required
-                  />
-                </div>
+                {/* Only shown when "Other" is selected */}
+                {rejectionReason === 'Other' && (
+                  <div className="space-y-1 animate-in fade-in duration-200">
+                    <label className="block text-xs font-bold text-slate-700">
+                      Specify Custom Reason <span className="text-rose-600">*</span>
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={customRejectionReason}
+                      onChange={(e) => setCustomRejectionReason(e.target.value)}
+                      placeholder="Please enter the specific reason for denial to inform the applicant..."
+                      className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      required
+                      autoFocus
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Email Notification Preview Callout */}
@@ -840,7 +859,7 @@ export default function RegistrationConfirmation() {
                 <p className="text-rose-800/90 text-[11px] leading-relaxed">
                   To: <strong>{rejectTarget.email}</strong><br />
                   Subject: <em>ABC School Student Registration Update</em><br />
-                  Explains that the request was not approved, provides the reason above, and includes Admissions contact info.
+                  Reason to send: <strong>{rejectionReason === 'Other' ? (customRejectionReason || 'Custom reason...') : rejectionReason}</strong>
                 </p>
               </div>
 
