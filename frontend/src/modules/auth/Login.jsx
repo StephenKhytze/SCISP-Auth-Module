@@ -28,7 +28,9 @@ export default function Login({ onLogin }) {
   };
 
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState('');
+  const savedUsername = localStorage.getItem('scisp_remembered_username') || '';
+  const [username, setUsername] = useState(savedUsername);
+  const [rememberMe, setRememberMe] = useState(Boolean(savedUsername));
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -69,6 +71,12 @@ export default function Login({ onLogin }) {
       const user = response.data.user;
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('user', JSON.stringify(user));
+
+      if (rememberMe) {
+        localStorage.setItem('scisp_remembered_username', username.trim());
+      } else {
+        localStorage.removeItem('scisp_remembered_username');
+      }
 
       // If user must change password upon first login, prompt modal
       if (user?.must_change_password) {
@@ -234,11 +242,19 @@ export default function Login({ onLogin }) {
             </button>
 
             <div className="flex items-center justify-between pt-1 pb-1">
-              <label className="flex items-center cursor-pointer">
+              <label className="flex items-center cursor-pointer select-none">
                 <input
                   type="checkbox"
                   id="remember"
-                  className="w-4 h-4 text-[#182848] border-gray-300 rounded focus:ring-[#182848]"
+                  checked={rememberMe}
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    setRememberMe(isChecked);
+                    if (!isChecked) {
+                      localStorage.removeItem('scisp_remembered_username');
+                    }
+                  }}
+                  className="w-4 h-4 text-[#182848] border-gray-300 rounded focus:ring-[#182848] cursor-pointer"
                 />
                 <span className="ml-2 text-xs text-gray-600 font-medium">Remember me</span>
               </label>
