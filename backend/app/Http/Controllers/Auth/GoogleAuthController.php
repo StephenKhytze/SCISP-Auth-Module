@@ -21,6 +21,7 @@ class GoogleAuthController extends Controller
     {
         $validated = $request->validate([
             'credential' => 'nullable|string',
+            'access_token' => 'nullable|string',
             'email' => 'nullable|email',
             'name' => 'nullable|string',
             'google_id' => 'nullable|string',
@@ -32,8 +33,39 @@ class GoogleAuthController extends Controller
         $name = $validated['name'] ?? null;
         $avatar = $validated['avatar'] ?? null;
 
-        // If a real Google JWT credential is provided, verify it directly with Google
-        if (!empty($validated['credential']) && substr_count($validated['credential'], '.') === 2) {
+        // 1. If an access_token is provided (via OAuth2 select_account popup), verify via userinfo
+        if (!empty($validated['access_token'])) {
+            try {
+                $response = Http::timeout(5)->withToken($validated['access_token'])
+                    ->get('https://www.googleapis.com/oauth2/v3/userinfo');
+
+                if ($response->successful()) {
+                    $googleData = $response->json();
+                    $email = $googleData['email'] ?? $email;
+                    $googleId = $googleData['sub'] ?? $googleId;
+                    $name = $googleData['name'] ?? $name;
+                    $avatar = $googleData['picture'] ?? $avatar;
+
+                    if (isset($googleData['email_verified']) && $googleData['email_verified'] !== 'true' && $googleData['email_verified'] !== true) {
+                        return response()->json([
+                            'message' => 'Your Google email address is unverified. Please verify your Google account first.'
+                        ], 401);
+                    }
+                } else {
+                    Log::warning('Google access token verification failed: ' . $response->body());
+                    return response()->json([
+                        'message' => 'Invalid or expired Google authorization token.'
+                    ], 401);
+                }
+            } catch (\Exception $e) {
+                Log::error('Error contacting Google OAuth service: ' . $e->getMessage());
+                return response()->json([
+                    'message' => 'Unable to verify Google credentials at this moment. Please try again or use standard login.'
+                ], 502);
+            }
+        }
+        // 2. If a real Google JWT credential is provided, verify it directly with Google tokeninfo
+        elseif (!empty($validated['credential']) && substr_count($validated['credential'], '.') === 2) {
             try {
                 $response = Http::timeout(5)->get('https://oauth2.googleapis.com/tokeninfo', [
                     'id_token' => $validated['credential'],
