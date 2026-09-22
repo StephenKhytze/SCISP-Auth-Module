@@ -580,7 +580,11 @@ export default function RegistrationConfirmation() {
                 </div>
                 <div>
                   <span className="text-slate-400 block font-medium">Date of Birth</span>
-                  <span className="font-bold text-slate-800">{selectedStudent.birthdate || '—'}</span>
+                  <span className="font-bold text-slate-800">
+                    {selectedStudent.birthdate 
+                      ? new Date(selectedStudent.birthdate.split('T')[0] + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                      : '—'}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-400 block font-medium">Gender</span>

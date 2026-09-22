@@ -10,11 +10,42 @@ export default function Topbar({
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-  const notifications = [
+  const INITIAL_NOTIFICATIONS = [
     { id: '1', text: 'New announcement published by Registrar', time: '10m ago', unread: true },
     { id: '2', text: 'Midterm Exam permit is ready for download', time: '1h ago', unread: true },
     { id: '3', text: 'Library book "High-Performance MySQL" due soon', time: '1d ago', unread: false },
   ];
+
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const saved = localStorage.getItem('user_notifications');
+      return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
+    } catch {
+      return INITIAL_NOTIFICATIONS;
+    }
+  });
+
+  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const handleMarkAllAsRead = () => {
+    const updated = notifications.map((n) => ({ ...n, unread: false }));
+    setNotifications(updated);
+    try {
+      localStorage.setItem('user_notifications', JSON.stringify(updated));
+    } catch {
+      // ignore storage errors
+    }
+  };
+
+  const handleToggleRead = (id) => {
+    const updated = notifications.map((n) => (n.id === id ? { ...n, unread: !n.unread } : n));
+    setNotifications(updated);
+    try {
+      localStorage.setItem('user_notifications', JSON.stringify(updated));
+    } catch {
+      // ignore storage errors
+    }
+  };
 
   return (
     <header className="h-16 md:h-[86px] bg-[#80172B] text-white flex items-center justify-between px-4 sm:px-6 md:px-8 select-none relative z-30 shadow-md border-b-2 border-[#651020]">
@@ -68,6 +99,7 @@ export default function Topbar({
         {/* Notification Bell */}
         <div className="relative">
           <button
+            type="button"
             onClick={() => {
               setShowNotifications(!showNotifications);
               setShowUserDropdown(false);
@@ -75,9 +107,13 @@ export default function Topbar({
             className="p-2 hover:bg-white/10 rounded-full transition-colors relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30"
             aria-label="Notifications"
           >
-            <Bell className="w-6 h-6 text-white fill-white" />
-            {/* Notification gold badge matching image */}
-            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#D4A373] border-2 border-[#80172B] rounded-full shadow-sm"></span>
+            {/* Bell Icon: filled when there are unread items, outline when all are read */}
+            <Bell className={`w-6 h-6 transition-colors ${unreadCount > 0 ? 'text-white fill-white' : 'text-white/80'}`} />
+            
+            {/* Yellow Dot Badge: ONLY shown when there is at least 1 unread notification */}
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#D4A373] border-2 border-[#80172B] rounded-full shadow-sm animate-pulse"></span>
+            )}
           </button>
 
           {/* Notifications Dropdown */}
@@ -85,21 +121,33 @@ export default function Topbar({
             <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white text-gray-800 rounded-lg shadow-xl border border-gray-200 py-2 z-50 text-xs animate-in fade-in duration-150">
               <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between font-semibold text-gray-700">
                 <span>Notifications</span>
-                <span className="bg-[#80172B]/10 text-[#80172B] px-1.5 py-0.5 rounded text-[10px]">
-                  2 New
-                </span>
+                {unreadCount > 0 ? (
+                  <span className="bg-[#80172B]/10 text-[#80172B] px-1.5 py-0.5 rounded text-[10px] font-bold">
+                    {unreadCount} New
+                  </span>
+                ) : (
+                  <span className="bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded text-[10px] font-semibold">
+                    All read
+                  </span>
+                )}
               </div>
               <div className="max-h-60 overflow-y-auto divide-y divide-gray-50">
                 {notifications.map((n) => (
                   <div
                     key={n.id}
-                    className={`p-3 hover:bg-gray-50 transition-colors flex items-start space-x-2.5 ${
-                      n.unread ? 'bg-amber-50/40' : ''
+                    onClick={() => handleToggleRead(n.id)}
+                    className={`p-3 hover:bg-gray-50 transition-colors flex items-start space-x-2.5 cursor-pointer ${
+                      n.unread ? 'bg-amber-50/40' : 'opacity-70'
                     }`}
+                    title="Click to toggle read/unread"
                   >
-                    <div className="w-2 h-2 rounded-full bg-[#80172B] mt-1.5 flex-shrink-0" />
+                    {n.unread ? (
+                      <div className="w-2 h-2 rounded-full bg-[#80172B] mt-1.5 flex-shrink-0" />
+                    ) : (
+                      <div className="w-2 h-2 rounded-full bg-slate-300 mt-1.5 flex-shrink-0" />
+                    )}
                     <div className="flex-1">
-                      <p className="text-gray-800 leading-snug">{n.text}</p>
+                      <p className={`leading-snug ${n.unread ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>{n.text}</p>
                       <span className="text-[10px] text-gray-400 mt-1 block">{n.time}</span>
                     </div>
                   </div>
@@ -107,10 +155,12 @@ export default function Topbar({
               </div>
               <div className="p-2 border-t border-gray-100 text-center">
                 <button
-                  onClick={() => setShowNotifications(false)}
-                  className="text-[11px] font-medium text-[#80172B] hover:underline"
+                  type="button"
+                  disabled={unreadCount === 0}
+                  onClick={handleMarkAllAsRead}
+                  className="text-[11px] font-medium text-[#80172B] hover:underline disabled:text-gray-400 disabled:no-underline cursor-pointer"
                 >
-                  Mark all as read
+                  {unreadCount === 0 ? 'All caught up' : 'Mark all as read'}
                 </button>
               </div>
             </div>
