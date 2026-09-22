@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\StudentRegistrationController;
 use App\Http\Controllers\Home\DashboardController;
 use App\Http\Controllers\Schedule\ScheduleController;
@@ -31,6 +32,9 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [StudentRegistrationController::class, 'register']);
     Route::get('/registration-status', [StudentRegistrationController::class, 'status']);
     Route::post('/google', [GoogleAuthController::class, 'handleGoogleAuth']);
+    Route::post('/forgot-password', [PasswordResetController::class, 'forgotPassword']);
+    Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyResetCode']);
+    Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 });
 
 Route::middleware('auth.jwt')->group(function () {

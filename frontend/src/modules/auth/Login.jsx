@@ -5,6 +5,7 @@ import StudentRegisterForm from './StudentRegisterForm';
 import RegistrationStatusModal from './RegistrationStatusModal';
 import FirstTimePasswordModal from './FirstTimePasswordModal';
 import GoogleAuthModal from './GoogleAuthModal';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 export default function Login({ onLogin }) {
   const navigate = useNavigate();
@@ -41,6 +42,18 @@ export default function Login({ onLogin }) {
 
   // First-time password modal
   const [firstTimeUser, setFirstTimeUser] = useState(null);
+
+  // Forgot password modal & reset link parameters
+  const searchParams = new URLSearchParams(location.search);
+  const isDirectReset = searchParams.get('action') === 'reset-password';
+  const urlResetToken = searchParams.get('token') || '';
+  const urlResetEmail = searchParams.get('email') || '';
+
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(
+    isDirectReset && (urlResetToken !== '' || urlResetEmail !== '')
+  );
+  const [resetEmail, setResetEmail] = useState(urlResetEmail);
+  const [resetToken, setResetToken] = useState(urlResetToken);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -229,9 +242,13 @@ export default function Login({ onLogin }) {
                 />
                 <span className="ml-2 text-xs text-gray-600 font-medium">Remember me</span>
               </label>
-              <a href="#" className="text-xs font-bold text-[#182848] hover:underline">
+              <button
+                type="button"
+                onClick={() => setIsForgotPasswordOpen(true)}
+                className="text-xs font-bold text-[#182848] hover:underline cursor-pointer bg-transparent border-none p-0 focus:outline-none"
+              >
                 Forgot Password?
-              </a>
+              </button>
             </div>
 
             <button
@@ -350,6 +367,23 @@ export default function Login({ onLogin }) {
         isOpen={isGoogleModalOpen}
         onClose={() => setIsGoogleModalOpen(false)}
         onLoginSuccess={handleGoogleSuccess}
+      />
+
+      {/* Forgot Password Recovery Modal */}
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordOpen}
+        onClose={() => {
+          setIsForgotPasswordOpen(false);
+          setResetEmail('');
+          setResetToken('');
+        }}
+        onSuccess={(recoveredUsername) => {
+          if (recoveredUsername) {
+            setUsername(recoveredUsername);
+          }
+        }}
+        initialEmail={resetEmail}
+        initialToken={resetToken}
       />
     </div>
   );

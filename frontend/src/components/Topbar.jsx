@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
-import { Bell, GraduationCap, Check, Shield, Crown, UserCheck, Laptop, LogOut, Menu } from 'lucide-react';
+import { Bell, GraduationCap, Menu } from 'lucide-react';
 
 export default function Topbar({
-  currentUser = { name: 'Juan Dela Cruz', role: 'Student', department: 'College of Computer Studies', idNumber: '2023-00123' },
-  users = [
-    { name: 'Juan Dela Cruz', role: 'Student', department: 'College of Computer Studies', idNumber: '2023-00123' },
-    { name: 'Prof. Maria Santos', role: 'Teacher', department: 'Faculty of Computer Studies', idNumber: 'FAC-4021' },
-    { name: 'Dr. Alejandro Reyes', role: 'Admin', department: 'Office of the Dean', idNumber: 'ADM-0091' },
-    { name: 'Engr. Marco Torres', role: 'Superadmin', department: 'IT Infrastructure & Security', idNumber: 'SA-0001' }
-  ],
-  onSelectUser = () => {},
-  onOpenTechSpec = () => {},
-  onLogout = () => {},
+  currentUser = { name: 'Kirsten Eve Estiva', role: 'Student', department: 'BS Information Technology', idNumber: '2024-01214' },
   isMobileMenuOpen = false,
   onToggleMobileMenu = () => {},
   onCloseMobileMenu = () => {},
@@ -137,7 +128,7 @@ export default function Topbar({
               setShowNotifications(false);
             }}
             className="flex items-center space-x-3 sm:space-x-4 group hover:opacity-95 transition-opacity focus:outline-none"
-            title="Switch User Role / View Profile"
+            title="View Profile"
           >
             {/* Persona Name & Role - Hidden in mobile view as specified */}
             <div className="hidden md:flex text-right flex-col justify-center leading-tight">
@@ -155,68 +146,23 @@ export default function Topbar({
             </div>
           </button>
 
-          {/* User Profile & Role Switcher Popup */}
+          {/* User Profile Popup */}
           {showUserDropdown && (
-            <div className="absolute right-0 mt-2 w-64 bg-white text-gray-800 rounded-lg shadow-xl border border-gray-200 py-2 z-50 animate-in fade-in duration-150">
-              <div className="px-4 py-2.5 border-b border-gray-100 bg-gray-50/80">
-                <p className="text-xs font-semibold text-gray-900">{currentUser?.name || 'User'}</p>
-                <p className="text-[11px] text-gray-500">{currentUser?.department || 'Department'}</p>
-                <p className="text-[10px] text-[#80172B] font-mono mt-0.5">ID: {currentUser?.idNumber || 'N/A'}</p>
+            <div className="absolute right-0 mt-2 w-64 bg-white text-gray-800 rounded-2xl shadow-xl border border-gray-200 p-4 z-50 animate-in fade-in duration-150">
+              <div className="flex items-center space-x-3 mb-2.5 pb-2.5 border-b border-gray-100">
+                <div className="w-10 h-10 rounded-full bg-[#fcedf0] text-[#80172B] flex items-center justify-center font-bold flex-shrink-0">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-gray-900 truncate">{currentUser?.name || 'User'}</p>
+                  <span className="inline-block px-1.5 py-0.5 bg-gray-100 text-[10px] font-semibold text-gray-600 rounded mt-0.5">
+                    {currentUser?.role || 'Guest'}
+                  </span>
+                </div>
               </div>
-
-              <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider">
-                Switch Role / Persona Mockup
-              </div>
-
-              {users.map((u) => (
-                <button
-                  key={u.idNumber}
-                  onClick={() => {
-                    onSelectUser(u);
-                    setShowUserDropdown(false);
-                  }}
-                  className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-gray-100 transition-colors ${
-                    currentUser?.idNumber === u.idNumber ? 'bg-amber-50 font-bold text-[#80172B]' : 'text-gray-700'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2.5">
-                    {u.role === 'Student' && <GraduationCap className="w-4 h-4 text-[#80172B]" />}
-                    {u.role === 'Teacher' && <UserCheck className="w-4 h-4 text-blue-700" />}
-                    {u.role === 'Admin' && <Shield className="w-4 h-4 text-amber-700" />}
-                    {u.role === 'Super Admin' && <Crown className="w-4 h-4 text-slate-800" />}
-                    <div>
-                      <p className="leading-tight font-semibold">{u.name}</p>
-                      <p className="text-[10px] text-gray-500 font-normal">{u.role}</p>
-                    </div>
-                  </div>
-                  {currentUser?.idNumber === u.idNumber && <Check className="w-3.5 h-3.5 text-[#80172B]" />}
-                </button>
-              ))}
-
-              <div className="border-t border-gray-100 mt-1 pt-1 px-2 space-y-0.5">
-                <button
-                  onClick={() => {
-                    setShowUserDropdown(false);
-                    onOpenTechSpec();
-                  }}
-                  className="w-full text-left px-3 py-1.5 text-xs text-gray-700 font-medium flex items-center space-x-2 hover:bg-gray-100 rounded transition-colors"
-                >
-                  <Laptop className="w-3.5 h-3.5 text-gray-500" />
-                  <span>View Tech Architecture</span>
-                </button>
-
-                {onLogout && (
-                  <button
-                    onClick={() => {
-                      setShowUserDropdown(false);
-                      onLogout();
-                    }}
-                    className="w-full text-left px-3 py-1.5 text-xs text-rose-700 font-bold flex items-center space-x-2 hover:bg-rose-50 rounded transition-colors"
-                  >
-                    <LogOut className="w-3.5 h-3.5 text-rose-600" />
-                    <span>Log Out / Switch Role Portal</span>
-                  </button>
-                )}
+              <div className="space-y-1 text-[11px] text-gray-500">
+                <p><strong className="text-gray-700">Department:</strong> {currentUser?.department || 'N/A'}</p>
+                <p><strong className="text-gray-700">ID Number:</strong> <span className="font-mono font-bold text-[#80172B]">{currentUser?.idNumber || 'N/A'}</span></p>
               </div>
             </div>
           )}

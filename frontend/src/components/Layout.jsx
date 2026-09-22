@@ -5,10 +5,10 @@ import Topbar from './Topbar';
 import api from '../services/api';
 
 const DEFAULT_USER = {
-  name: 'Juan Dela Cruz',
+  name: 'Kirsten Eve Estiva',
   role: 'Student',
-  department: 'College of Computer Studies',
-  idNumber: '2023-00123'
+  department: 'BS Information Technology',
+  idNumber: '2024-01214'
 };
 
 export default function Layout() {
@@ -51,7 +51,6 @@ export default function Layout() {
       {/* Topbar spans the full width at the top */}
       <Topbar 
         currentUser={currentUser} 
-        onSelectUser={handleSelectUser}
         onLogout={handleLogout}
         isMobileMenuOpen={isMobileMenuOpen}
         onToggleMobileMenu={() => setIsMobileMenuOpen(prev => !prev)}
