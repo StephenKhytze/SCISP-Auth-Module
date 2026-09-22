@@ -383,6 +383,14 @@ export default function Login({ onLogin }) {
         isOpen={isGoogleModalOpen}
         onClose={() => setIsGoogleModalOpen(false)}
         onLoginSuccess={handleGoogleSuccess}
+        onSwitchToRegister={() => {
+          setIsGoogleModalOpen(false);
+          toggleMode(true);
+        }}
+        onCheckStatus={(refCode) => {
+          setIsGoogleModalOpen(false);
+          openStatusCheck(refCode);
+        }}
       />
 
       {/* Forgot Password Recovery Modal */}

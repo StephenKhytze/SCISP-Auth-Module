@@ -92,16 +92,30 @@ class GoogleAuthController extends Controller
             }
         }
 
-        // 3. If still not found, check if an approved student registration exists with this email
+        // 3. If still not found as an active User, check student registration history
         if (!$user) {
-            $approvedRegistration = StudentRegistration::where('email', $email)
-                ->where('status', 'approved')
-                ->latest()
-                ->first();
+            $existingReg = StudentRegistration::where('email', $email)->latest()->first();
 
-            if ($approvedRegistration) {
-                // Find user by student id number if created by approval workflow
-                $user = User::where('email', $email)->first();
+            if ($existingReg) {
+                if ($existingReg->status === 'approved') {
+                    // Find user created by approval workflow
+                    $user = User::where('email', $email)->first();
+                } elseif ($existingReg->status === 'pending') {
+                    return response()->json([
+                        'message' => "Your registration application ({$existingReg->reference_number}) is currently pending review by the Admissions Office. Once approved, you can sign in directly with Google.",
+                        'error_code' => 'REGISTRATION_PENDING',
+                        'reference_number' => $existingReg->reference_number,
+                        'email' => $email
+                    ], 403);
+                } elseif ($existingReg->status === 'rejected') {
+                    $reason = $existingReg->rejection_reason ?: 'Incomplete scholastic prerequisites.';
+                    return response()->json([
+                        'message' => "Your registration ({$existingReg->reference_number}) was not approved. Reason: {$reason}. Please contact the Registrar.",
+                        'error_code' => 'REGISTRATION_REJECTED',
+                        'reference_number' => $existingReg->reference_number,
+                        'email' => $email
+                    ], 403);
+                }
             }
         }
 
